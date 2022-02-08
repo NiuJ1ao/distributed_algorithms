@@ -6,7 +6,7 @@ defmodule Vote do
 
 # s = server process state (c.f. self/this)
 
-# def send_vote_reply_to_candidate(m.candidateP, false) do
+# def send_vote_reply_to_candidate(s, m.candidateP, false) do
 
 # end
 

@@ -61,4 +61,5 @@ ps:
 	@echo ------------------------------------------------------------
 	epmd -names
 
-
+unittest: 
+	mix test test/vote/
