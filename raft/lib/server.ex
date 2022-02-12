@@ -92,12 +92,21 @@ def next(s) do
   Server.next(s)
 end # next
 
+def become_follower(s, mterm) do
+
+end
+
+def become_candidate(s) do
+  s |> State.role(:CANDIDATE)
+end
+
+def become_leader(s) do
+  s |> State.role(:LEADER)
+end
 
 """  Omitted
 def follower_if_higher(s, mterm) do
-def become_follower(s, mterm) do
-def become_candidate(s) do
-def become_leader(s) do
+
 def execute_committed_entries(s) do
 """
 
