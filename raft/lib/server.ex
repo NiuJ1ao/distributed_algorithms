@@ -92,22 +92,29 @@ def next(s) do
   Server.next(s)
 end # next
 
-def become_follower(s, mterm) do
-
-end
-
-def become_candidate(s) do
-  s |> State.role(:CANDIDATE)
-end
-
-def become_leader(s) do
-  s |> State.role(:LEADER)
-end
-
-"""  Omitted
-def follower_if_higher(s, mterm) do
+# """  Omitted
+# def follower_if_higher(s, mterm) do
+# def become_leader(s) do
+# def become_candidate(s) do
+# def become_follower(s, mterm) do
+# def execute_committed_entries(s) do
+# """
 
 def execute_committed_entries(s) do
-"""
+  s
+end # execute_committed_entries
+
+def become_follower(s, mterm) do
+  s |> State.curr_term(mterm)
+    |> State.role(:FOLLOWER)
+    |> State.voted_for(nil)
+    |> Timer.restart_election_timer()
+end
+
+# step down
+def follower_if_higher(s, mterm) do
+  s |> Debug.received("Sender's term is larger than my current term. Step down.")
+    |> Server.become_follower(mterm)
+end
 
 end # Server

@@ -3,8 +3,8 @@
 # coursework, raft 
 # Makefile, v1
 
-SERVERS   = 3      	
-CLIENTS   = 3      	
+SERVERS   = 3
+CLIENTS   = 1
 
 TIMELIMIT = 15000	# quits after milli-seconds(ms)
 SETUP     = default	# one of default, slower, faster, etc
@@ -12,9 +12,9 @@ SETUP     = default	# one of default, slower, faster, etc
 # AppendEntries(areq, arep, atim), Vote(vreq, vrep, vall), Election(etim), DB(dreq, drep), Client(creq, crep)
 # Prefixes + for send/send_after,  - for receive
 DEBUG_OPTIONS = "+areq -areq +arep -arep +vreq +vall -vreq +vrep -vrep +atim -atim +etim -etim +dreq -dreq +drep -drep -creq -crep"
-DEBUG_OPTIONS = "none"
+DEBUG_OPTIONS = "+vreq +vall -vreq +vrep -vrep +etim -etim ?rec !snd +areq"
 
-DEBUG_LEVEL   = 0
+DEBUG_LEVEL   = 1
 
 START     = Raft.start
 HOST	 := 127.0.0.1
