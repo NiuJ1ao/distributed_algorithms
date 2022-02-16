@@ -113,7 +113,7 @@ end
 
 # step down
 def follower_if_higher(s, mterm) do
-  s |> Debug.received("Sender's term is larger than my current term. Step down.")
+  s |> Debug.received("Step down")
     |> Server.become_follower(mterm)
 end
 

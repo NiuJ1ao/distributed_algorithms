@@ -13,29 +13,35 @@ def send_append_entries_request_to_follower(s, followerP) do
   # In the slide, they use index that is chosen from a range. why?
   last_log_index = s.next_index[followerP] - 1
 
-  s = s |> Debug.message("+areq", "Last log index = #{inspect last_log_index}")
-        |> Timer.restart_append_entries_timer(followerP)
+  s = s |> Timer.restart_append_entries_timer(followerP)
 
-  send followerP, {:APPEND_ENTRIES_REQUEST, s.curr_term, %{
+  msg = if last_log_index == 0 do
+    s |> Debug.message("+areq", "HEARTBEAT")
+    {:APPEND_ENTRIES_REQUEST, s.curr_term, %{leaderP: s.selfP}}
+  else
+    {:APPEND_ENTRIES_REQUEST, s.curr_term, %{
       leaderP: s.selfP,
       prev_index: last_log_index - 1,
-      prev_term: Log.term_at(s, last_log_index - 1), # BUG: function nil.term/0 is undefined - no log entry yet. Possible fix: implement heartbeat first, then AEReq.
+      prev_term: Log.term_at(s, last_log_index - 1),
       entries: Log.get_entries(s, [last_log_index..Log.last_index(s)]),
-      commit_index: s.commit_index
-  }}
-  s |> Debug.message("+areq", "Send to #{followerP}")
+      commit_index: s.commit_index,
+    }}
+  end
+
+  send followerP, msg
+  s |> Debug.message("+areq", "#{inspect msg}")
 end # send_append_entries_request_to_follower
 
 # ________________________________________________________________________ Leader >> All
 def broadcast_append_entries_request_from_leader(s) do
-  s = Enum.reduce(s.servers, s, fn(x, y) ->
+  s = s |> Debug.message("+areq", "Broadcast APPEND_ENTRIES_REQUEST")
+  Enum.reduce(s.servers, s, fn(x, y) ->
     if x != y.selfP do
       y |> send_append_entries_request_to_follower(x)
     else
       y
     end
   end)
-  s |> Debug.message("+areq", "Broadcast Append_Entries_Request")
 end # broadcast_append_entries_request_from_leader
 
 # ________________________________________________________________________ Follower >> Leader
@@ -50,14 +56,20 @@ def send_entries_reply_to_leader(s, leaderP, success, index) do
       success: success,
       index: index
   }}
-  s
+  s |> Debug.message("+arep", "Send #{success} to #{inspect leaderP}")
 end # send_entries_reply_to_leader
 
 # ________________________________________________________________________ Leader >> Follower
+def receive_append_entries_request_from_leader(s, mterm, m) when map_size(m) == 1 do
+  s |> Debug.message("-areq", "HEARTBEAT")
+    |> Server.become_follower(mterm)
+    |> State.leaderP(m.leaderP)
+end # receive_append_entries_request_from_leader
+
+# ________________________________________________________________________ Leader >> Follower
 def receive_append_entries_request_from_leader(s, mterm, m) do
-  s =
-    s |> Server.become_follower(mterm)
-      |> State.leaderP(m.leaderP)
+  s = s |> Server.become_follower(mterm)
+        |> State.leaderP(m.leaderP)
 
   # AppendEntries consistency check
   success = m.prev_index == 0 or (
@@ -107,7 +119,7 @@ def receive_append_entries_reply_from_follower(s, mterm, m) do
           # decrement next index
           s |> State.next_index(m.followerP, max(1, s.next_index[m.followerP] - 1))
         end
-      if s.next_index[m.followerP] <= Log.last_index(s) do
+      if s.next_index[m.followerP] <= Log.last_index(s) do # retry at previous index
         s |> send_append_entries_request_to_follower(m.followerP)
       else
         s
@@ -123,7 +135,7 @@ def receive_append_entries_timeout(s, followerP) do
     s |> Timer.restart_append_entries_timer(followerP)
       |> send_append_entries_request_to_follower(followerP)
   else
-    s
+    s |> Timer.cancel_all_append_entries_timers()
   end
 end # receive_append_entries_timeout
 

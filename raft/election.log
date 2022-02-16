@@ -1,0 +1,157 @@
+mix compile
+Compiling 1 file (.ex)
+-------------------------------------------------------------------
+server2-0001 role=FOLLOWER  term=000 +etim {{:ELECTION_TIMEOUT, 0, 0}, 160}
+server1-0001 role=FOLLOWER  term=000 +etim {{:ELECTION_TIMEOUT, 0, 0}, 166}
+server3-0001 role=FOLLOWER  term=000 +etim {{:ELECTION_TIMEOUT, 0, 0}, 141}
+server3-0002 role=CANDIDATE term=002 -etim "Restart election timer"
+server3-0003 role=CANDIDATE term=002 +etim {{:ELECTION_TIMEOUT, 2, 0}, 124}
+server3-0004 role=CANDIDATE term=002 !snd "Broadcast :VOTE_REQUEST %{from: #PID<0.148.0>, last_index: 0, last_term: 0}"
+server2-0002 role=FOLLOWER  term=000 -vreq {:VOTE_REQUEST, 2, %{from: #PID<18210.148.0>, last_index: 0, last_term: 0}}
+server1-0002 role=FOLLOWER  term=000 -vreq {:VOTE_REQUEST, 2, %{from: #PID<18210.148.0>, last_index: 0, last_term: 0}}
+server2-0003 role=FOLLOWER  term=000 ?rec "Sender's term is larger than my current term. Step down."
+server1-0003 role=FOLLOWER  term=000 ?rec "Sender's term is larger than my current term. Step down."
+server1-0004 role=FOLLOWER  term=002 +etim {{:ELECTION_TIMEOUT, 2, 0}, 140}
+server2-0004 role=FOLLOWER  term=002 +etim {{:ELECTION_TIMEOUT, 2, 0}, 172}
+server1-0005 role=FOLLOWER  term=002 +vrep %{election: 0, voteGranted: true, voted_by: #PID<0.148.0>, voted_for: nil}
+server2-0005 role=FOLLOWER  term=002 +vrep %{election: 0, voteGranted: true, voted_by: #PID<0.148.0>, voted_for: nil}
+server3-0005 role=CANDIDATE term=002 -vrep {:VOTE_REPLY, 2, %{election: 0, voteGranted: true, voted_by: #PID<18181.148.0>, voted_for: nil}}
+server2-0006 role=FOLLOWER  term=002 ?rec "stale {:ELECTION_TIMEOUT, 0, 0}"
+server3-0006 role=CANDIDATE term=002 -vrep "vote_tally >= majority, become leader"
+server3-0007 role=LEADER    term=002 !snd "Broadcast :APPEND_ENTRIES_REQUEST %{}"
+server3-0008 role=LEADER    term=002 -vrep {:VOTE_REPLY, 2, %{election: 0, voteGranted: true, voted_by: #PID<18182.148.0>, voted_for: nil}}
+server3-0009 role=LEADER    term=002 -vrep "%{election: 0, voteGranted: true, voted_by: #PID<18182.148.0>, voted_for: nil} is ignored"
+server1-0006 role=CANDIDATE term=002 -etim "Restart election timer"
+server1-0007 role=CANDIDATE term=002 +etim {{:ELECTION_TIMEOUT, 2, 0}, 124}
+server1-0008 role=CANDIDATE term=002 !snd "Broadcast :VOTE_REQUEST %{from: #PID<0.148.0>, last_index: 0, last_term: 0}"
+server2-0007 role=FOLLOWER  term=002 -vreq {:VOTE_REQUEST, 2, %{from: #PID<18209.148.0>, last_index: 0, last_term: 0}}
+server3-0010 role=LEADER    term=002 -vreq {:VOTE_REQUEST, 2, %{from: #PID<18181.148.0>, last_index: 0, last_term: 0}}
+server2-0008 role=FOLLOWER  term=002 +vrep %{election: 0, voteGranted: false, voted_by: #PID<0.148.0>, voted_for: nil}
+server3-0011 role=LEADER    term=002 -vreq "voted_for: #PID<0.148.0>"
+server1-0009 role=CANDIDATE term=002 -vrep {:VOTE_REPLY, 2, %{election: 0, voteGranted: false, voted_by: #PID<18209.148.0>, voted_for: nil}}
+server3-0012 role=LEADER    term=002 +etim {{:ELECTION_TIMEOUT, 2, 0}, 181}
+server1-0010 role=CANDIDATE term=002 -vrep "%{election: 0, voteGranted: false, voted_by: #PID<18209.148.0>, voted_for: nil} is ignored"
+server3-0013 role=LEADER    term=002 +vrep %{election: 0, voteGranted: true, voted_by: #PID<0.148.0>, voted_for: #PID<18181.148.0>}
+server1-0011 role=CANDIDATE term=002 -vrep {:VOTE_REPLY, 2, %{election: 0, voteGranted: true, voted_by: #PID<18210.148.0>, voted_for: #PID<0.148.0>}}
+server1-0012 role=CANDIDATE term=002 -vrep "vote_tally >= majority, become leader"
+server1-0013 role=LEADER    term=002 !snd "Broadcast :APPEND_ENTRIES_REQUEST %{}"
+server2-0009 role=CANDIDATE term=002 -etim "Restart election timer"
+server2-0010 role=CANDIDATE term=002 +etim {{:ELECTION_TIMEOUT, 2, 0}, 103}
+server2-0011 role=CANDIDATE term=002 !snd "Broadcast :VOTE_REQUEST %{from: #PID<0.148.0>, last_index: 0, last_term: 0}"
+server1-0014 role=LEADER    term=002 -vreq {:VOTE_REQUEST, 2, %{from: #PID<18209.148.0>, last_index: 0, last_term: 0}}
+server3-0014 role=LEADER    term=002 -vreq {:VOTE_REQUEST, 2, %{from: #PID<18182.148.0>, last_index: 0, last_term: 0}}
+server1-0015 role=LEADER    term=002 -vreq "voted_for: #PID<0.148.0>"
+server3-0015 role=LEADER    term=002 -vreq "voted_for: #PID<18181.148.0>"
+server1-0016 role=LEADER    term=002 +etim {{:ELECTION_TIMEOUT, 2, 0}, 178}
+server3-0016 role=LEADER    term=002 +etim {{:ELECTION_TIMEOUT, 2, 0}, 119}
+server1-0017 role=LEADER    term=002 +vrep %{election: 0, voteGranted: true, voted_by: #PID<0.148.0>, voted_for: #PID<18209.148.0>}
+server3-0017 role=LEADER    term=002 +vrep %{election: 0, voteGranted: true, voted_by: #PID<0.148.0>, voted_for: #PID<18182.148.0>}
+server2-0012 role=CANDIDATE term=002 -vrep {:VOTE_REPLY, 2, %{election: 0, voteGranted: true, voted_by: #PID<18209.148.0>, voted_for: #PID<0.148.0>}}
+server2-0013 role=CANDIDATE term=002 -vrep "vote_tally >= majority, become leader"
+server2-0014 role=LEADER    term=002 !snd "Broadcast :APPEND_ENTRIES_REQUEST %{}"
+server2-0015 role=LEADER    term=002 -vrep {:VOTE_REPLY, 2, %{election: 0, voteGranted: true, voted_by: #PID<18210.148.0>, voted_for: #PID<0.148.0>}}
+server2-0016 role=LEADER    term=002 -vrep "%{election: 0, voteGranted: true, voted_by: #PID<18210.148.0>, voted_for: #PID<0.148.0>} is ignored"
+  time = 500 client requests seen = []
+  time = 500      db updates done = []
+
+  time = 1000 client requests seen = []
+  time = 1000      db updates done = []
+
+  time = 1500 client requests seen = []
+  time = 1500      db updates done = []
+
+  time = 2000 client requests seen = []
+  time = 2000      db updates done = []
+
+  time = 2500 client requests seen = []
+  time = 2500      db updates done = []
+
+  time = 3000 client requests seen = []
+  time = 3000      db updates done = []
+
+  time = 3500 client requests seen = []
+  time = 3500      db updates done = []
+
+  time = 4000 client requests seen = []
+  time = 4000      db updates done = []
+
+  time = 4500 client requests seen = []
+  time = 4500      db updates done = []
+
+  time = 5000 client requests seen = []
+  time = 5000      db updates done = []
+
+  time = 5500 client requests seen = []
+  time = 5500      db updates done = []
+
+  time = 6000 client requests seen = []
+  time = 6000      db updates done = []
+
+  time = 6500 client requests seen = []
+  time = 6500      db updates done = []
+
+  time = 7000 client requests seen = []
+  time = 7000      db updates done = []
+
+  time = 7500 client requests seen = []
+  time = 7500      db updates done = []
+
+  time = 8000 client requests seen = []
+  time = 8000      db updates done = []
+
+  time = 8500 client requests seen = []
+  time = 8500      db updates done = []
+
+  time = 9000 client requests seen = []
+  time = 9000      db updates done = []
+
+  time = 9500 client requests seen = []
+  time = 9500      db updates done = []
+
+  time = 10000 client requests seen = []
+  time = 10000      db updates done = []
+
+  time = 10500 client requests seen = []
+  time = 10500      db updates done = []
+
+  time = 11000 client requests seen = []
+  time = 11000      db updates done = []
+
+  time = 11500 client requests seen = []
+  time = 11500      db updates done = []
+
+  time = 12000 client requests seen = []
+  time = 12000      db updates done = []
+
+  time = 12500 client requests seen = []
+  time = 12500      db updates done = []
+
+  time = 13000 client requests seen = []
+  time = 13000      db updates done = []
+
+  time = 13500 client requests seen = []
+  time = 13500      db updates done = []
+
+  time = 14000 client requests seen = []
+  time = 14000      db updates done = []
+
+  Node client2_17_ycniu@127.0.0.1 exiting - maxtime reached
+  Node client5_17_ycniu@127.0.0.1 exiting - maxtime reached
+  Node server2_17_ycniu@127.0.0.1 exiting - maxtime reached
+  Node client4_17_ycniu@127.0.0.1 exiting - maxtime reached
+  Node client3_17_ycniu@127.0.0.1 exiting - maxtime reached
+  Node server3_17_ycniu@127.0.0.1 exiting - maxtime reached
+  Node server5_17_ycniu@127.0.0.1 exiting - maxtime reached
+  Node server1_17_ycniu@127.0.0.1 exiting - maxtime reached
+  Node server4_17_ycniu@127.0.0.1 exiting - maxtime reached
+  Node client1_17_ycniu@127.0.0.1 exiting - maxtime reached
+  time = 14500 client requests seen = []
+  time = 14500      db updates done = []
+
+  Node raft_17_ycniu@127.0.0.1 exiting - maxtime reached
+  time = 15000 client requests seen = []
+  time = 15000      db updates done = []
+
+  time = 15500 client requests seen = []
+  time = 15500      db updates done = []
+

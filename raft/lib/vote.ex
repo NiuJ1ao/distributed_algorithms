@@ -23,9 +23,10 @@ def receive_vote_reply_from_follower(s, mterm, m) do
       s |> Server.follower_if_higher(mterm)
     mterm == s.curr_term and s.role == :CANDIDATE and m.voteGranted ->
       s = s |> State.add_to_voted_by(m.voted_by)
-      if State.vote_tally(s) >= s.majority do
+      if State.vote_tally(s) > s.majority do
         # become leader
-        s |> Debug.message("-vrep", "vote_tally >= majority, become leader")
+        s |> Debug.message("-vrep", "Become leader")
+          |> Timer.cancel_election_timer()
           |> State.role(:LEADER)
           |> State.leaderP(s.selfP)
           |> State.init_next_index()  # reinitialize after election
@@ -61,7 +62,6 @@ def receive_election_timeout(s) do
       |> State.voted_for(s.selfP)       # vote for self
       |> State.new_voted_by()
       |> State.add_to_voted_by(s.selfP)
-      |> Debug.message("-etim", "Restart election timer")
       |> Timer.restart_election_timer() # set new timeout
       |> broadcast_vote_requests()
   else
@@ -70,14 +70,13 @@ def receive_election_timeout(s) do
 end
 
 defp broadcast_vote_requests(s) do
-  msg = %{
-    from: s.selfP,
-    last_term: Log.last_term(s),
-    last_index: Log.last_index(s)
-  }
   for server <- s.servers, server != s.selfP, do:
-      send server, {:VOTE_REQUEST, s.curr_term, msg}
-  s |> Debug.message("+vreq", "Broadcast #{inspect msg}")
+      send server, {:VOTE_REQUEST, s.curr_term, %{
+        from: s.selfP,
+        last_term: Log.last_term(s),
+        last_index: Log.last_index(s)
+      }}
+  s |> Debug.message("+vreq", "Broadcast vote requests")
 end
 
 end # Vote
