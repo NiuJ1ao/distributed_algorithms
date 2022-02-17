@@ -74,7 +74,7 @@ def next(s) do
     s |> Debug.received("Old Election Timeout #{inspect msg}")
 
   { :ELECTION_TIMEOUT, _mterm, _melection } = msg ->        # Self {Follower, Candidate} >> Self
-    s |> Debug.received("-etim", msg)
+    s |> Debug.message("-etim", msg)
       |> Vote.receive_election_timeout()
 
   # ________________________________________________________
@@ -117,9 +117,10 @@ end # execute_committed_entries
 
 def become_follower(s, mterm) do
   s |> State.curr_term(mterm)
+    |> Timer.restart_election_timer()
     |> State.role(:FOLLOWER)
     |> State.voted_for(nil)
-    |> Timer.restart_election_timer()
+    |> Debug.received("Become follower")
 end
 
 # step down
