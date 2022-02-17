@@ -111,10 +111,19 @@ def receive_append_entries_reply_from_follower(s, mterm, m) do
       s =
         if m.success do
           # update match index and next index
-          s |> State.next_index(m.followerP, m.index + 1)
+          s = s |> State.next_index(m.followerP, m.index + 1)
             |> State.match_index(m.followerP, m.index)
 
           # TODO: entry committed if known to be stored on majority of servers
+          count = Enum.count(s.match_index, fn({_, x}) -> x >= s.commit_index end)
+          if count > s.majority do
+            send s.databaseP, {:DB_REQUEST, Log.request_at(s, s.commit_index)}
+            s |> State.commit_index(s.commit_index + 1)
+
+            # TODO: let followers know about the new commit index
+          else
+            s
+          end
         else
           # decrement next index
           s |> State.next_index(m.followerP, max(1, s.next_index[m.followerP] - 1))
