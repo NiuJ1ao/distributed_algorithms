@@ -6,8 +6,6 @@ defmodule AppendEntries do
 
 # s = server process state (c.f. this/self)
 
-# TODO: commit
-
 # ________________________________________________________________________Leader >> Follower
 def send_append_entries_request_to_follower(s, followerP) do
   # In the slide, they use index that is chosen from a range. why?
@@ -33,7 +31,7 @@ def send_append_entries_request_to_follower(s, followerP) do
 end # send_append_entries_request_to_follower
 
 # ________________________________________________________________________ Leader >> All
-def broadcast_append_entries_request_from_leader(s) do
+def broadcast_append_entries_request_to_follower(s) do
   s = s |> Debug.message("+areq", "Broadcast APPEND_ENTRIES_REQUEST")
   Enum.reduce(s.servers, s, fn(x, y) ->
     if x != y.selfP do
@@ -56,7 +54,7 @@ def send_entries_reply_to_leader(s, leaderP, success, index) do
       success: success,
       index: index
   }}
-  s |> Debug.message("+arep", "Send #{success} to #{inspect leaderP}")
+  s |> Debug.message("+arep", "#{success}")
 end # send_entries_reply_to_leader
 
 # ________________________________________________________________________ Leader >> Follower
@@ -115,6 +113,8 @@ def receive_append_entries_reply_from_follower(s, mterm, m) do
           # update match index and next index
           s |> State.next_index(m.followerP, m.index + 1)
             |> State.match_index(m.followerP, m.index)
+
+          # TODO: entry committed if known to be stored on majority of servers
         else
           # decrement next index
           s |> State.next_index(m.followerP, max(1, s.next_index[m.followerP] - 1))

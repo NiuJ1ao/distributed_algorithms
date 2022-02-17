@@ -21,7 +21,7 @@ def receive_vote_reply_from_follower(s, mterm, m) do
   cond do
     mterm > s.curr_term and not m.voteGranted ->
       s |> Server.follower_if_higher(mterm)
-    mterm == s.curr_term and s.role == :CANDIDATE and m.voteGranted ->
+    mterm == s.curr_term and s.role == :CANDIDATE and m.voteGranted and (m.voted_for == nil or m.voted_for == s.selfP) ->
       s = s |> State.add_to_voted_by(m.voted_by)
       if State.vote_tally(s) > s.majority do
         # become leader
@@ -31,7 +31,7 @@ def receive_vote_reply_from_follower(s, mterm, m) do
           |> State.leaderP(s.selfP)
           |> State.init_next_index()  # reinitialize after election
           |> State.init_match_index()
-          |> AppendEntries.broadcast_append_entries_request_from_leader()
+          |> AppendEntries.broadcast_append_entries_request_to_follower()
       else
         s
       end
