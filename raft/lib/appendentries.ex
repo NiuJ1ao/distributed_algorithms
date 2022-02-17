@@ -8,7 +8,6 @@ defmodule AppendEntries do
 
 # ________________________________________________________________________Leader >> Follower
 def send_append_entries_request_to_follower(s, followerP) do
-  # In the slide, they use index that is chosen from a range. why?
   last_log_index = s.next_index[followerP] - 1
 
   s = s |> Timer.restart_append_entries_timer(followerP)
@@ -17,11 +16,18 @@ def send_append_entries_request_to_follower(s, followerP) do
     s |> Debug.message("+areq", "HEARTBEAT")
     {:APPEND_ENTRIES_REQUEST, s.curr_term, %{leaderP: s.selfP}}
   else
+    prev_index = last_log_index - 1
+    prev_term =
+      if prev_index > 0 do
+        Log.term_at(s, prev_index)
+      else
+        0
+      end
     {:APPEND_ENTRIES_REQUEST, s.curr_term, %{
       leaderP: s.selfP,
-      prev_index: last_log_index - 1,
-      prev_term: Log.term_at(s, last_log_index - 1),
-      entries: Log.get_entries(s, [last_log_index..Log.last_index(s)]),
+      prev_index: prev_index,
+      prev_term: prev_term,
+      entries: Log.get_entries(s, [last_log_index..Log.last_index(s)]), # send multiple entries for efficiency
       commit_index: s.commit_index,
     }}
   end
@@ -44,12 +50,13 @@ end # broadcast_append_entries_request_from_leader
 
 # ________________________________________________________________________ Follower >> Leader
 def send_entries_reply_to_leader(s, leaderP, false) do
-  s |> send_entries_reply_to_leader(leaderP, false, nil)
+  s |> Server.become_follower(s.curr_term)
+    |> send_entries_reply_to_leader(leaderP, false, nil)
 end # send_entries_reply_to_leader
 
 # ________________________________________________________________________ Follower >> Leader
 def send_entries_reply_to_leader(s, leaderP, success, index) do
-  send leaderP, {:APPEND_ENTRIES_REPLY, s.term, %{
+  send leaderP, {:APPEND_ENTRIES_REPLY, s.curr_term, %{
       followerP: s.selfP,
       success: success,
       index: index
@@ -71,7 +78,7 @@ def receive_append_entries_request_from_leader(s, mterm, m) do
 
   # AppendEntries consistency check
   success = m.prev_index == 0 or (
-    m.prev_index < Log.last_index(s) and
+    m.prev_index <= Log.last_index(s) and
     m.prev_term == Log.term_at(s, m.prev_index)
   )
 
@@ -87,18 +94,13 @@ end # receive_append_entries_request_from_leader
 
 defp store_entries(s, prev_index, entries, commit_index) do
   start = prev_index + 1
-  last = start + Enum.count(entries)
+  last = min(start + Enum.count(entries), Log.last_index(s))
   # delete extraneous entries
-  s =
-    if last < Log.last_index(s) do
-      s |> Log.delete_entries(start..last)
-    else
-      s |> Log.delete_entries_from(start)
-    end
+  s = s |> Log.delete_entries_from(start)
   # fill in missing entries
   s =
     s |> Log.merge_entries(entries)
-      |> State.commit_index(min(commit_index, last))
+      |> State.commit_index(min(commit_index, last)) # this could decrease commit index
   {s, last}
 end # store_entries
 
@@ -112,15 +114,15 @@ def receive_append_entries_reply_from_follower(s, mterm, m) do
         if m.success do
           # update match index and next index
           s = s |> State.next_index(m.followerP, m.index + 1)
-            |> State.match_index(m.followerP, m.index)
+                |> State.match_index(m.followerP, m.index)
 
-          # TODO: entry committed if known to be stored on majority of servers
+          # entry committed if known to be stored on majority of servers
           count = Enum.count(s.match_index, fn({_, x}) -> x >= s.commit_index end)
           if count > s.majority do
-            send s.databaseP, {:DB_REQUEST, Log.request_at(s, s.commit_index)}
             s |> State.commit_index(s.commit_index + 1)
 
-            # TODO: let followers know about the new commit index
+            # let followers know about the new commit index
+            s |> broadcast_append_entries_request_to_follower()
           else
             s
           end

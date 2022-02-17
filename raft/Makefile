@@ -12,7 +12,7 @@ SETUP     = default	# one of default, slower, faster, etc
 # AppendEntries(areq, arep, atim), Vote(vreq, vrep, vall), Election(etim), DB(dreq, drep), Client(creq, crep)
 # Prefixes + for send/send_after,  - for receive
 DEBUG_OPTIONS = "+areq -areq +arep -arep +vreq +vall -vreq +vrep -vrep +atim -atim +etim -etim +dreq -dreq +drep -drep -creq -crep"
-DEBUG_OPTIONS = "+areq -areq +arep -arep +vreq +vall -vreq +vrep -vrep +atim -atim +etim -etim"
+DEBUG_OPTIONS = "+vreq +vall -vreq +vrep +etim -etim"
 
 DEBUG_LEVEL   = 1
 

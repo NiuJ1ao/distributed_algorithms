@@ -101,7 +101,18 @@ end # next
 # """
 
 def execute_committed_entries(s) do
-  s
+  if s.commit_index > s.last_applied do
+    # increment last applied
+    s = s |> State.last_applied(s.last_applied + 1)
+
+    # apply log[last_applied] to state machine
+    send s.databaseP, {
+      :DB_REQUEST, Log.request_at(s, s.last_applied)
+    }
+    s
+  else
+    s
+  end # if
 end # execute_committed_entries
 
 def become_follower(s, mterm) do

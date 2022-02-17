@@ -76,7 +76,7 @@ defp broadcast_vote_requests(s) do
         last_term: Log.last_term(s),
         last_index: Log.last_index(s)
       }}
-  s |> Debug.message("+vreq", "Broadcast vote requests")
+  s |> Debug.message("+vall", "Broadcast vote requests")
 end
 
 end # Vote

@@ -51,7 +51,7 @@ end # initialise
 def leaderP(s, v),        do: Map.put(s, :leaderP, v)
 def election_timer(s, v), do: Map.put(s, :election_timer, v)
 def curr_election(s, v),  do: Map.put(s, :curr_election, v)
-def inc_election(s),      do: Map.put(s, :curr_term, s.curr_election + 1)
+def inc_election(s),      do: Map.put(s, :curr_election, s.curr_election + 1)
 def voted_for(s, v),      do: Map.put(s, :voted_for, v)
 def new_voted_by(s),      do: Map.put(s, :voted_by, MapSet.new)
 def add_to_voted_by(s, v),do: Map.put(s, :voted_by, MapSet.put(s.voted_by, v))
