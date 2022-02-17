@@ -40,7 +40,7 @@ def restart_append_entries_timer(s, followerP) do
     s.config.append_entries_timeout
   )
   s |> State.append_entries_timer(followerP, append_entries_timer)
-  s |> Debug.message("+atim", {{ :APPEND_ENTRIES_TIMEOUT, s.curr_term, followerP }, s.config.append_entries_timeout})
+    |> Debug.message("+atim", {{:APPEND_ENTRIES_TIMEOUT, s.curr_term, followerP}, s.config.append_entries_timeout})
 end # restart_append_entries_timer
 
 # _________________________________________________________ cancel_append_entries_timer()
