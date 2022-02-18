@@ -6,6 +6,8 @@ defmodule Vote do
 
 # s = server process state (c.f. self/this)
 
+# Bug: possible two leader: 3 servers. Two server broadcast VoteReq at the same time. The third server first stepdown and erase the voted record. When it receive another VoteReq, it will vote for another server -solved.
+
 def send_vote_reply_to_candidate(s, candidateP, voteGranted) do
   msg = %{
     election: s.curr_election,
@@ -24,7 +26,7 @@ def receive_vote_reply_from_follower(s, mterm, m) do
         |> Server.follower_if_higher(mterm)
     m.election == s.curr_election and s.role == :CANDIDATE and m.voteGranted and (m.voted_for == nil or m.voted_for == s.selfP) ->
       s = s |> State.add_to_voted_by(m.voted_by)
-      if State.vote_tally(s) > s.majority do
+      if State.vote_tally(s) >= s.majority do
         # become leader
         s |> Timer.cancel_election_timer()
           |> State.role(:LEADER)
@@ -46,6 +48,7 @@ def receive_vote_request_from_candidate(s, mterm, m) do
     m.election > s.curr_election ->
       s |> Server.follower_if_higher(mterm)
         |> State.curr_election(m.election)
+        |> State.voted_for(m.from)
         |> send_vote_reply_to_candidate(m.from, true)
     m.election == s.curr_election and (s.voted_for == nil or s.voted_for == m.from) and (m.last_term > Log.last_term(s) or (m.last_term == Log.last_term(s) and m.last_index >= Log.last_index(s))) ->
       s |> State.voted_for(m.from)

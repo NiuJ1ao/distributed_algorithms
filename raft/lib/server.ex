@@ -101,18 +101,20 @@ end # next
 # """
 
 def execute_committed_entries(s) do
-  if s.commit_index > s.last_applied do
-    # increment last applied
-    s = s |> State.last_applied(s.last_applied + 1)
+  # # entries must be committed before applying
+  # if s.commit_index > s.last_applied do
+  #   # increment last applied
+  #   s = s |> State.last_applied(s.last_applied + 1)
 
-    # apply log[last_applied] to state machine
-    send s.databaseP, {
-      :DB_REQUEST, Log.request_at(s, s.last_applied)
-    }
-    s
-  else
-    s
-  end # if
+  #   # apply log[last_applied] to state machine
+  #   send s.databaseP, {
+  #     :DB_REQUEST, Log.request_at(s, s.last_applied)
+  #   }
+  #   s
+  # else
+  #   s
+  # end # if
+  s
 end # execute_committed_entries
 
 def become_follower(s, mterm) do
@@ -120,13 +122,12 @@ def become_follower(s, mterm) do
     |> Timer.restart_election_timer()
     |> State.role(:FOLLOWER)
     |> State.voted_for(nil)
-    |> Debug.received("Become follower")
 end
 
 # step down
 def follower_if_higher(s, mterm) do
-  s |> Debug.received("Step down")
-    |> Server.become_follower(mterm)
+  s |> Server.become_follower(mterm)
+    |> Debug.received("Step Down! Become follower.")
 end
 
 end # Server

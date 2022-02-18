@@ -33,6 +33,6 @@ def delete_entries(s, range), do:                 # e.g. delete s.log[3..5] keep
   Log.new(s, Map.drop(s.log, Enum.to_list(range)))
 
 def delete_entries_from(s, from), do:             # delete s.log[from..last] keep rest
-  Log.delete_entries(s, from .. Log.last_index(s))
+  Log.delete_entries(s, from .. Log.last_index(s)//1)
 
 end # Log
