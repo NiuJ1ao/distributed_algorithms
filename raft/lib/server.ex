@@ -83,6 +83,8 @@ def next(s) do
       |> ClientReq.receive_request_from_client(m)
 
   # { :DB_RESULT, _result } when false -> # don't process DB_RESULT here
+  { :DB_REPLY, m } ->
+    s |> Debug.message("-drep", "Database reply #{inspect m}")
 
   unexpected ->
     Helper.node_halt("************* Server: unexpected message #{inspect unexpected}")
@@ -101,20 +103,19 @@ end # next
 # """
 
 def execute_committed_entries(s) do
-  # # entries must be committed before applying
-  # if s.commit_index > s.last_applied do
-  #   # increment last applied
-  #   s = s |> State.last_applied(s.last_applied + 1)
+  # entries must be committed before applying
+  if s.commit_index > s.last_applied do
+    # increment last applied
+    s = s |> State.last_applied(s.last_applied + 1)
 
-  #   # apply log[last_applied] to state machine
-  #   send s.databaseP, {
-  #     :DB_REQUEST, Log.request_at(s, s.last_applied)
-  #   }
-  #   s
-  # else
-  #   s
-  # end # if
-  s
+    # apply log[last_applied] to state machine
+    send s.databaseP, {
+      :DB_REQUEST, Log.request_at(s, s.last_applied)
+    }
+    s
+  else
+    s
+  end # if
 end # execute_committed_entries
 
 def become_follower(s, mterm) do

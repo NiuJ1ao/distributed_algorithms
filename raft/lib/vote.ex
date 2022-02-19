@@ -39,7 +39,7 @@ def receive_vote_reply_from_follower(s, mterm, m) do
         s
       end
     true ->
-      s |> Debug.message("-vrep", "#{inspect m} is ignored")
+      s |> Debug.message("-vrep", "Ignored message #{inspect m}")
   end
 end
 
