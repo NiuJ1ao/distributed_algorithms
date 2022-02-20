@@ -132,50 +132,48 @@ defp store_entries(s, prev_index, entries, commit_index) do
 end # store_entries
 
 # ________________________________________________________________________ Follower >> Leader
-def receive_append_entries_reply_from_follower(s, mterm, m) do
-  cond do
-    mterm > s.curr_term ->
-      s |> Server.follower_if_higher(mterm)
+def receive_append_entries_reply_from_follower(s, mterm, _m) when mterm > s.curr_term do
+  s |> Server.follower_if_higher(mterm)
+end # receive_append_entries_reply_from_follower
 
-    s.role == :LEADER and mterm == s.curr_term ->
-      # s =
-      if m.success do
-        # update match index and next index
-        s = s |> State.next_index(m.followerP, m.index + 1)
-              |> State.match_index(m.followerP, m.index)
+def receive_append_entries_reply_from_follower(s, mterm, m) when s.role == :LEADER and mterm == s.curr_term do
+  if m.success do
+    # update match index and next index
+    s = s |> State.next_index(m.followerP, m.index + 1)
+          |> State.match_index(m.followerP, m.index)
 
-        s |> Debug.message("-arep", "Update next_index = #{s.next_index[m.followerP]}, match_index = #{s.match_index[m.followerP]} of server#{m.server_num}")
+    s |> Debug.message("-arep", "Update next_index = #{s.next_index[m.followerP]}, match_index = #{s.match_index[m.followerP]} of server#{m.server_num}")
 
-        # entry committed if known to be stored on majority of servers
-        count = Enum.count(s.match_index, fn({_, x}) -> x > s.commit_index end) + 1
-        s |> Debug.message("-arep", "Count of entry committed = #{count}")
-        if count >= s.majority do
-          s = s |> State.commit_index(s.commit_index + 1)
-          s |> Debug.message("-arep", "Update commit index = #{s.commit_index} and broadcast of server#{m.server_num}")
-            |> broadcast_append_entries_request_to_follower() # let followers know about the new commit index
-        else
-          s
-        end
-      else
-        # decrement next index if not success
-        s |> State.next_index(m.followerP, max(1, s.next_index[m.followerP] - 1))
-          |> Debug.message("-arep", "Decrement next index of server#{m.server_num} and retry.")
-          |> send_append_entries_request_to_follower(m.followerP)
-      end
-
-    true ->
+    # entry committed if known to be stored on majority of servers
+    count = Enum.count(s.match_index, fn({_, x}) -> x > s.commit_index end) + 1
+    s |> Debug.message("-arep", "Count of entry committed = #{count}")
+    if count >= s.majority do
+      s = s |> State.commit_index(s.commit_index + 1)
+      s |> Debug.message("-arep", "Update commit index = #{s.commit_index} and broadcast of server#{m.server_num}")
+        |> broadcast_append_entries_request_to_follower() # let followers know about the new commit index
+    else
       s
+    end
+  else
+    # decrement next index if not success
+    s |> State.next_index(m.followerP, max(1, s.next_index[m.followerP] - 1))
+      |> Debug.message("-arep", "Decrement next index of server#{m.server_num} and retry.")
+      |> send_append_entries_request_to_follower(m.followerP)
   end
 end # receive_append_entries_reply_from_follower
 
+def receive_append_entries_reply_from_follower(s, _mterm, _m) do
+  s
+end # receive_append_entries_reply_from_follower
+
 # ________________________________________________________________________ Leader >> Leader
-def receive_append_entries_timeout(s, followerP) do
-  if s.role == :LEADER do
-    s |> Timer.restart_append_entries_timer(followerP)
-      |> send_append_entries_request_to_follower(followerP)
-  else
-    s |> Timer.cancel_all_append_entries_timers()
-  end
+def receive_append_entries_timeout(s, followerP) when s.role == :LEADER do
+  s |> Timer.restart_append_entries_timer(followerP)
+    |> send_append_entries_request_to_follower(followerP)
+end # receive_append_entries_timeout
+
+def receive_append_entries_timeout(s, _followerP) do
+  s |> Timer.cancel_all_append_entries_timers()
 end # receive_append_entries_timeout
 
 end # AppendEntriess
