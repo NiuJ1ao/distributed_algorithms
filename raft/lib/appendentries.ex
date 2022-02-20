@@ -23,8 +23,9 @@ def send_append_entries_request_to_follower(s, followerP) do
           0
         end
       entries = Log.get_entries(s, last_log_index..Log.last_index(s))  # send multiple entries for efficiency
-      s |> Debug.message("+areq", "#{inspect s.log}[#{last_log_index}..#{Log.last_index(s)}] => #{inspect entries}")
-      s |> Debug.assert(map_size(entries) > 0, "Send AppendReq: entries is empty")
+      s |> Debug.message("+areq", "#{inspect s.log}[#{last_log_index}..#{Log.last_index(s)}] => #{inspect entries}", 2)
+        |> Debug.message("+areq", "Send log[#{last_log_index}..#{Log.last_index(s)}] to follower")
+        |> Debug.assert(map_size(entries) > 0, "Send AppendReq: entries is empty")
       {:APPEND_ENTRIES_REQUEST, s.curr_term, %{
         leaderP: s.selfP,
         prev_index: prev_index,
@@ -34,7 +35,7 @@ def send_append_entries_request_to_follower(s, followerP) do
       }}
     else
       # no log or waitting for new client request, send empty areq as heartbeat
-      s |> Debug.message("+areq", "HEARTBEAT", 2)
+      s |> Debug.message("+areq", "HEARTBEAT")
       {:APPEND_ENTRIES_REQUEST, s.curr_term, %{
         leaderP: s.selfP,
         prev_index: Log.last_index(s),
@@ -45,7 +46,7 @@ def send_append_entries_request_to_follower(s, followerP) do
     end
 
   send followerP, msg
-  s |> Debug.message("+areq", "#{inspect msg}")
+  s |> Debug.message("+areq", "#{inspect msg}", 2)
 end # send_append_entries_request_to_follower
 
 # ________________________________________________________________________ Leader >> All
@@ -71,17 +72,11 @@ def send_entries_reply_to_leader(s, leaderP, success, index) do
   send leaderP, {:APPEND_ENTRIES_REPLY, s.curr_term, %{
       followerP: s.selfP,
       success: success,
-      index: index
+      index: index,
+      server_num: s.server_num
   }}
   s |> Debug.message("+arep", "Send reply to leader: #{success} with match index #{index}")
 end # send_entries_reply_to_leader
-
-# # ________________________________________________________________________ Leader >> Follower
-# def receive_append_entries_request_from_leader(s, mterm, m) when map_size(m) == 1 do
-#   s |> Debug.message("-areq", "HEARTBEAT", 2)
-#     |> Server.become_follower(mterm)
-#     |> State.leaderP(m.leaderP)
-# end # receive_append_entries_request_from_leader
 
 # ________________________________________________________________________ Leader >> Follower
 def receive_append_entries_request_from_leader(s, mterm, m) do
@@ -101,14 +96,15 @@ def receive_append_entries_request_from_leader(s, mterm, m) do
       {s, 0}
     end
 
+  # for debug
   if map_size(m.entries) == 0 do
     s |> Debug.message("-areq", "HEARTBEAT")
   else
     s |> Debug.assert(index > 0, "Recv AppendReq: matched index is 0")
+      |> Debug.message("-areq", "Store entires with match index #{index}: #{success}")
   end
 
-  s |> Debug.message("-areq", "Store entires with match index #{index}: #{success}")
-    |> Debug.message("-areq", "Follower log update: #{inspect s.log}")
+  s |> Debug.message("-areq", "Follower log update: #{inspect s.log}", 2)
     |> send_entries_reply_to_leader(s.leaderP, success, index)
 end # receive_append_entries_request_from_leader
 
@@ -117,9 +113,16 @@ defp store_entries(s, prev_index, entries, commit_index) do
   match_index = start - 1 + map_size(entries)
 
   # delete extraneous entries
-  s |> Debug.message("-areq", "Log before deletion: #{inspect s.log}")
+  s |> Debug.message("-areq", "Log before deletion: #{inspect s.log}", 2)
   s = s |> Log.delete_entries_from(start)
-  s |> Debug.message("-areq", "Log after deletion: #{inspect s.log} from #{start}")
+  s |> Debug.message("-areq", "Log after deletion: #{inspect s.log} from #{start}", 2)
+
+  # check disjointedness
+  if map_size(entries) > 0 do
+    {idx, _req} = Enum.at(entries, 0)
+    s |> Debug.assert(Log.last_index(s) + 1 == idx, "Entries are not disjoint.")
+  end
+
   # fill in missing entries
   s =
     s |> Log.merge_entries(entries)
@@ -133,36 +136,33 @@ def receive_append_entries_reply_from_follower(s, mterm, m) do
   cond do
     mterm > s.curr_term ->
       s |> Server.follower_if_higher(mterm)
+
     s.role == :LEADER and mterm == s.curr_term ->
-      s =
-        if m.success do
-          # update match index and next index
-          s = s |> State.next_index(m.followerP, m.index + 1)
-                |> State.match_index(m.followerP, m.index)
+      # s =
+      if m.success do
+        # update match index and next index
+        s = s |> State.next_index(m.followerP, m.index + 1)
+              |> State.match_index(m.followerP, m.index)
 
-          s |> Debug.message("-arep", "Update next_index = #{s.next_index[m.followerP]}, match_index = #{s.match_index[m.followerP]} of a follower")
+        s |> Debug.message("-arep", "Update next_index = #{s.next_index[m.followerP]}, match_index = #{s.match_index[m.followerP]} of server#{m.server_num}")
 
-          # entry committed if known to be stored on majority of servers
-          count = Enum.count(s.match_index, fn({_, x}) -> x > s.commit_index end)
-          s |> Debug.message("-arep", "Count of entry committed = #{count}")
-          if count >= s.majority do
-            s = s |> State.commit_index(s.commit_index + 1)
-            s |> Debug.message("-arep", "Update commit index = #{s.commit_index} and broadcast")
-              |> broadcast_append_entries_request_to_follower() # let followers know about the new commit index
-          else
-            s
-          end
+        # entry committed if known to be stored on majority of servers
+        count = Enum.count(s.match_index, fn({_, x}) -> x > s.commit_index end) + 1
+        s |> Debug.message("-arep", "Count of entry committed = #{count}")
+        if count >= s.majority do
+          s = s |> State.commit_index(s.commit_index + 1)
+          s |> Debug.message("-arep", "Update commit index = #{s.commit_index} and broadcast of server#{m.server_num}")
+            |> broadcast_append_entries_request_to_follower() # let followers know about the new commit index
         else
-          # decrement next index if not success
-          s |> State.next_index(m.followerP, max(1, s.next_index[m.followerP] - 1))
-            |> Debug.message("-arep", "Decrement next index.")
+          s
         end
-      if s.next_index[m.followerP] <= Log.last_index(s) do # retry at previous index
-        s |> Debug.message("-arep", "Retry at a new previous index")
-          |> send_append_entries_request_to_follower(m.followerP)
       else
-        s
+        # decrement next index if not success
+        s |> State.next_index(m.followerP, max(1, s.next_index[m.followerP] - 1))
+          |> Debug.message("-arep", "Decrement next index of server#{m.server_num} and retry.")
+          |> send_append_entries_request_to_follower(m.followerP)
       end
+
     true ->
       s
   end

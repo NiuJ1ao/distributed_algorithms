@@ -24,13 +24,14 @@ def receive_vote_reply_from_follower(s, mterm, m) do
     m.election > s.curr_election and not m.voteGranted ->
       s |> State.curr_election(m.election)
         |> Server.follower_if_higher(mterm)
+
     m.election == s.curr_election and s.role == :CANDIDATE and m.voteGranted and (m.voted_for == nil or m.voted_for == s.selfP) ->
       s = s |> State.add_to_voted_by(m.voted_by)
       if State.vote_tally(s) >= s.majority do
         # become leader
         s |> Timer.cancel_election_timer()
           |> State.role(:LEADER)
-          |> Debug.message("-vrep", "Become leader")
+          |> Debug.message("!inf", "Become leader")
           |> State.leaderP(s.selfP)
           |> State.init_next_index()  # reinitialize after election
           |> State.init_match_index()
@@ -38,8 +39,9 @@ def receive_vote_reply_from_follower(s, mterm, m) do
       else
         s
       end
+
     true ->
-      s |> Debug.message("-vrep", "Ignored message #{inspect m}")
+      s |> Debug.message("-vrep", "Ignore vote #{inspect m}")
   end
 end
 
@@ -50,10 +52,12 @@ def receive_vote_request_from_candidate(s, mterm, m) do
         |> State.curr_election(m.election)
         |> State.voted_for(m.from)
         |> send_vote_reply_to_candidate(m.from, true)
+
     m.election == s.curr_election and (s.voted_for == nil or s.voted_for == m.from) and (m.last_term > Log.last_term(s) or (m.last_term == Log.last_term(s) and m.last_index >= Log.last_index(s))) ->
       s |> State.voted_for(m.from)
         |> Timer.restart_election_timer()
         |> send_vote_reply_to_candidate(m.from, true)
+
     true ->
       s |> Debug.message("-vreq", "Reject to vote")
         |> Timer.restart_election_timer()
@@ -67,6 +71,7 @@ def receive_election_timeout(s) do
       |> State.inc_term()               # increment current term
       |> Timer.restart_election_timer() # set new timeout
       |> State.role(:CANDIDATE)         # change to candidate
+      |> State.leaderP(nil)
       |> State.voted_for(s.selfP)       # vote for self
       |> State.new_voted_by()
       |> State.add_to_voted_by(s.selfP)

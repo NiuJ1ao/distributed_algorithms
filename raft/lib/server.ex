@@ -12,6 +12,11 @@ def start(config, server_num) do
     |> Configuration.node_info("Server", server_num)
     |> Debug.node_starting()
 
+  crash_timeout = Map.get(config.crash_servers, server_num)
+  if crash_timeout != nil do
+    Process.send_after(self(), :CRASH_TIMEOUT, crash_timeout)
+  end
+
   receive do
   { :BIND, servers, databaseP } ->
     State.initialise(config, server_num, servers, databaseP)
@@ -83,8 +88,8 @@ def next(s) do
       |> ClientReq.receive_request_from_client(m)
 
   # { :DB_RESULT, _result } when false -> # don't process DB_RESULT here
-  { :DB_REPLY, m } ->
-    s |> Debug.message("-drep", "Database reply #{inspect m}")
+  :CRASH_TIMEOUT ->
+    Helper.node_halt("Server#{s.server_num} crashed")
 
   unexpected ->
     Helper.node_halt("************* Server: unexpected message #{inspect unexpected}")
@@ -112,6 +117,12 @@ def execute_committed_entries(s) do
     send s.databaseP, {
       :DB_REQUEST, Log.request_at(s, s.last_applied)
     }
+    receive do
+      {:DB_REPLY, m} ->
+        request = Log.request_at(s, s.last_applied)
+        send request.clientP, {:CLIENT_REPLY, request.cid, m, s.leaderP}
+        s |> Debug.message("-drep", "Database reply #{inspect {request.cid, m, s.leaderP}}")
+    end
     s
   else
     s
