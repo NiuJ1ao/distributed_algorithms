@@ -3,8 +3,8 @@
 # coursework, raft 
 # Makefile, v1
 
-SERVERS   = 3
-CLIENTS   = 3
+SERVERS   = 5
+CLIENTS   = 5
 
 TIMELIMIT = 15000	# quits after milli-seconds(ms)
 SETUP     = default	# one of default, slower, faster, etc
@@ -13,7 +13,7 @@ SETUP     = default	# one of default, slower, faster, etc
 # Prefixes + for send/send_after,  - for receive
 DEBUG_OPTIONS = "+areq -areq +arep -arep +vreq +vall -vreq +vrep -vrep +atim -atim +etim -etim +dreq -dreq +drep -drep -creq -crep"
 DEBUG_OPTIONS = "!inf ?rec !snd -etim +areq -areq -atim +arep -arep +dreq -dreq +drep -drep -creq -crep +vreq +vall -vreq +vrep -vrep"
-# DEBUG_OPTIONS = "!inf"
+DEBUG_OPTIONS = "!inf"
 
 DEBUG_LEVEL   = 1
 

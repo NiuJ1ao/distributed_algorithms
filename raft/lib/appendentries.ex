@@ -149,7 +149,7 @@ def receive_append_entries_reply_from_follower(s, mterm, m) when s.role == :LEAD
     s |> Debug.message("-arep", "Count of entry committed = #{count}")
     if count >= s.majority do
       s = s |> State.commit_index(s.commit_index + 1)
-      s |> Debug.message("-arep", "Update commit index = #{s.commit_index} and broadcast of server#{m.server_num}")
+      s |> Debug.message("-arep", "Update commit index = #{s.commit_index}")
         # |> broadcast_append_entries_request_to_follower() # let followers know about the new commit index
     else
       s
