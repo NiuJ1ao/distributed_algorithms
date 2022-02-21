@@ -88,6 +88,11 @@ def next(s) do
       |> ClientReq.receive_request_from_client(m)
 
   # { :DB_RESULT, _result } when false -> # don't process DB_RESULT here
+  {:DB_REPLY, m} ->
+    # request = Log.request_at(s, s.last_applied)
+    send m.clientP, {:CLIENT_REPLY, m.cid, m.result, s.leaderP}
+    s |> Debug.message("-drep", "Database reply #{inspect {m.cid, m.result, s.leaderP}}")
+
   :CRASH_TIMEOUT ->
     Helper.node_halt("Server#{s.server_num} crashed")
 
@@ -117,12 +122,12 @@ def execute_committed_entries(s) do
     send s.databaseP, {
       :DB_REQUEST, Log.request_at(s, s.last_applied)
     }
-    receive do
-      {:DB_REPLY, m} ->
-        request = Log.request_at(s, s.last_applied)
-        send request.clientP, {:CLIENT_REPLY, request.cid, m, s.leaderP}
-        s |> Debug.message("-drep", "Database reply #{inspect {request.cid, m, s.leaderP}}")
-    end
+    # receive do
+    #   {:DB_REPLY, m} ->
+    #     request = Log.request_at(s, s.last_applied)
+    #     send request.clientP, {:CLIENT_REPLY, request.cid, m, s.leaderP}
+    #     s |> Debug.message("-drep", "Database reply #{inspect {request.cid, m, s.leaderP}}")
+    # end
     s
   else
     s
