@@ -168,8 +168,7 @@ end # receive_append_entries_reply_from_follower
 
 # ________________________________________________________________________ Leader >> Leader
 def receive_append_entries_timeout(s, followerP) when s.role == :LEADER do
-  s |> Timer.restart_append_entries_timer(followerP)
-    |> send_append_entries_request_to_follower(followerP)
+  s |> send_append_entries_request_to_follower(followerP)
 end # receive_append_entries_timeout
 
 def receive_append_entries_timeout(s, _followerP) do
