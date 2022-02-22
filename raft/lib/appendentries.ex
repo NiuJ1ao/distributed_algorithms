@@ -2,6 +2,8 @@
 # distributed algorithms, n.dulay, 8 feb 2022
 # coursework, raft consensus, v2
 
+# Yuchen Niu (yn621) and Zian Wang (zw4821)
+
 defmodule AppendEntries do
 
 # s = server process state (c.f. this/self)
