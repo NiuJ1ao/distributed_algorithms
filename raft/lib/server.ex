@@ -22,8 +22,65 @@ def start(config, server_num) do
     State.initialise(config, server_num, servers, databaseP)
       |> Timer.restart_election_timer()
       |> Server.next()
+
+  { :TEST_FOLLOWER, servers, databaseP } ->
+    Map.put(config, :leader_pid, Enum.at(servers, 0))
+    State.initialise(config, server_num, servers, databaseP)
+      |> Timer.restart_election_timer()
+      |> Server.test_follower()
+
+  { :TEST_LEADER, servers, databaseP } ->
+    Map.put(config, :leader_pid, Enum.at(servers, 0))
+    # make LEADER crash
+    Process.send_after(self(), :VOTE_TEST_TIMEOUT, 2000)
+
+    State.initialise(config, server_num, servers, databaseP)
+      |> Timer.restart_election_timer()
+      |> Server.test_leader()
+
   end # receive
 end # start
+
+def test_follower(s) do
+  s = receive do
+    { :VOTE_REQUEST, mterm, m } = msg ->                      # Candidate >> All
+    s |> Debug.message("-vreq", "Recive a vote request from server")
+      |> Vote.receive_vote_request_from_candidate(mterm, m)
+
+    { :ELECTION_TIMEOUT, _mterm, _melection } = msg ->        # Self {Follower, Candidate} >> Self
+    s |> Debug.message("-etim", "Update Client Timer")
+      |> Timer.restart_election_timer()
+
+    unexpected = msg ->
+      s |> Debug.received("#{inspect msg}")
+
+  end # receive
+  Server.test_follower(s)
+end   # def
+
+def test_leader(s) do
+  s = receive do
+    { :ELECTION_TIMEOUT, _mterm, _melection } = msg ->        # Self {Follower, Candidate} >> Self
+    s |> Debug.message("-etim", msg)
+      |> Vote.receive_election_timeout()
+
+    { :VOTE_REPLY, mterm, m } = msg ->                        # Follower >> Candidate
+    if m.election < s.curr_election do
+      s |> Debug.received("Discard Reply to old Vote Request #{inspect msg}")
+    else
+      s |> Debug.message("-vrep", msg)
+        |> Vote.receive_vote_reply_from_follower(mterm, m)
+    end # if
+
+    :VOTE_TEST_TIMEOUT ->
+      Helper.node_halt("Server#{s.server_num} crashed")
+
+    unexpected = msg ->
+      s |> Debug.received("#{inspect msg}")
+
+  end   # receive
+  Server.test_leader(s)
+end     # defp
 
 # _________________________________________________________ next()
 def next(s) do

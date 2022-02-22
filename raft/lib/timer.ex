@@ -59,5 +59,13 @@ def cancel_all_append_entries_timers(s) do
   s |> State.append_entries_timers()                        # now reset to Map.new
 end # cancel_all_append_entries_timers
 
+def set_dummy_timer(s) do
+  Process.send_after(
+    s.selfP,
+    { :DUMMY_TIMER, s.curr_term, s.curr_election },
+    s.config.dummy_time_interval
+  )
+  s |> State.election_timer(s.config.monitor_interval)
+  end
 
 end # Timer

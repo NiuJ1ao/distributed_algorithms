@@ -16,7 +16,8 @@ def node_init() do
       n_servers:      String.to_integer(Enum.at(System.argv, 4)),
       n_clients:      String.to_integer(Enum.at(System.argv, 5)),
       setup:          :'#{Enum.at(System.argv, 6)}',
-      start_function: :'#{Enum.at(System.argv, 7)}',
+      debug_mode:     :'#{Enum.at(System.argv, 7)}',
+      start_function: :'#{Enum.at(System.argv, 8)}',
     }
 
   if config.n_servers < 3 do Helper.node_halt("Raft is unlikely to work with fewer than 3 servers") end
@@ -52,6 +53,8 @@ def params :default do
     election_timeout_range:  100..200, # timeout(ms) for election, set randomly in range
     append_entries_timeout:  10,       # timeout(ms) for the reply to a append_entries request
 
+    dummy_time_interval:     10,
+
     monitor_interval:        500,      # interval(ms) between monitor summaries
 
     crash_servers: %{		       # server_num => crash_after_time (ms), ..
@@ -62,7 +65,67 @@ def params :default do
   }
 end # params :default
 
-# >>>>>>>>>>>  add you setups for running experiments
+def params :low_vote_timeout do
+  %{
+    n_accounts:              100,      # account numbers 1 .. n_accounts
+    max_amount:              1_000,    # max amount moved between accounts in a single transaction
+
+    client_timelimit:        60_000,   # clients stops sending requests after this time(ms)
+    max_client_requests:     5_000,        # maximum no of requests each client will attempt
+    client_request_interval: 5,        # interval(ms) between client requests
+    client_reply_timeout:    50,      # timeout(ms) for the reply to a client request
+
+    election_timeout_range:  30..70,  # timeout(ms) for election, set randomly in range
+    append_entries_timeout:  50,       # timeout(ms) for the reply to a append_entries request
+
+    monitor_interval:        500,      # interval(ms) between monitor summaries
+
+    crash_servers: %{		       # server_num => crash_after_time (ms), ..
+    }
+  }
+end
+
+  def params :high_requests do
+  %{
+    n_accounts:              1000,      # account numbers 1 .. n_accounts
+    max_amount:              1_000_000,    # max amount moved between accounts in a single transaction
+
+    client_timelimit:        60_000,   # clients stops sending requests after this time(ms)
+    max_client_requests:     5_0000,       # maximum no of requests each client will attempt
+    client_request_interval: 2,        # interval(ms) between client requests
+    client_reply_timeout:    50,      # timeout(ms) for the reply to a client request
+
+    election_timeout_range:  100..200, # timeout(ms) for election, set randomly in range
+    append_entries_timeout:  10,       # timeout(ms) for the reply to a append_entries request
+
+    monitor_interval:        500,      # interval(ms) between monitor summaries
+
+    crash_servers: %{		       # server_num => crash_after_time (ms), ..
+    }
+  }
+end
+
+  def params :server1_3_crash do
+  %{
+    n_accounts:              100,      # account numbers 1 .. n_accounts
+    max_amount:              1_000,    # max amount moved between accounts in a single transaction
+
+    client_timelimit:        60_000,   # clients stops sending requests after this time(ms)
+    max_client_requests:     5_000,        # maximum no of requests each client will attempt
+    client_request_interval: 5,        # interval(ms) between client requests
+    client_reply_timeout:    50,      # timeout(ms) for the reply to a client request
+
+    election_timeout_range:  100..200, # timeout(ms) for election, set randomly in range
+    append_entries_timeout:  10,       # timeout(ms) for the reply to a append_entries request
+
+    monitor_interval:        500,      # interval(ms) between monitor summaries
+
+    crash_servers: %{		       # server_num => crash_after_time (ms), ..
+      1 => 1500,
+      3 => 5000,
+    }
+  }
+end
 
 # _________________________________________________________ params :slower ()
 def params :slower do              # settingsto slow timing

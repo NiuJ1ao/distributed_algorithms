@@ -1,0 +1,107 @@
+mix compile
+-------------------------------------------------------------------
+  time = 500 client requests seen = []
+  time = 500      db updates done = []
+
+server5-0001 role=LEADER    term=002 !inf "Become leader"
+  time = 1000 client requests seen = [{5, 45}]
+  time = 1000      db updates done = [{1, 40}, {2, 40}, {3, 40}, {4, 40}, {5, 45}]
+
+  time = 1500 client requests seen = [{5, 150}]
+  time = 1500      db updates done = [{1, 145}, {2, 145}, {3, 145}, {4, 145}, {5, 149}]
+
+  time = 2000 client requests seen = [{5, 254}]
+  time = 2000      db updates done = [{1, 250}, {2, 250}, {3, 250}, {4, 250}, {5, 250}]
+
+  time = 2500 client requests seen = [{5, 356}]
+  time = 2500      db updates done = [{1, 355}, {2, 350}, {3, 350}, {4, 350}, {5, 355}]
+
+  time = 3000 client requests seen = [{5, 461}]
+  time = 3000      db updates done = [{1, 455}, {2, 455}, {3, 455}, {4, 455}, {5, 460}]
+
+  time = 3500 client requests seen = [{5, 555}]
+  time = 3500      db updates done = [{1, 550}, {2, 550}, {3, 550}, {4, 550}, {5, 555}]
+
+  time = 4000 client requests seen = [{5, 643}]
+  time = 4000      db updates done = [{1, 640}, {2, 640}, {3, 640}, {4, 640}, {5, 640}]
+
+  time = 4500 client requests seen = [{5, 740}]
+  time = 4500      db updates done = [{1, 735}, {2, 735}, {3, 735}, {4, 735}, {5, 735}]
+
+  time = 5000 client requests seen = [{5, 844}]
+  time = 5000      db updates done = [{1, 840}, {2, 840}, {3, 840}, {4, 840}, {5, 840}]
+
+  time = 5500 client requests seen = [{5, 951}]
+  time = 5500      db updates done = [{1, 945}, {2, 945}, {3, 945}, {4, 945}, {5, 950}]
+
+  time = 6000 client requests seen = [{5, 1058}]
+  time = 6000      db updates done = [{1, 1055}, {2, 1055}, {3, 1055}, {4, 1055}, {5, 1055}]
+
+  time = 6500 client requests seen = [{5, 1163}]
+  time = 6500      db updates done = [{1, 1160}, {2, 1160}, {3, 1156}, {4, 1160}, {5, 1160}]
+
+  time = 7000 client requests seen = [{5, 1266}]
+  time = 7000      db updates done = [{1, 1260}, {2, 1260}, {3, 1260}, {4, 1260}, {5, 1265}]
+
+  time = 7500 client requests seen = [{5, 1365}]
+  time = 7500      db updates done = [{1, 1360}, {2, 1360}, {3, 1360}, {4, 1360}, {5, 1365}]
+
+  time = 8000 client requests seen = [{5, 1469}]
+  time = 8000      db updates done = [{1, 1465}, {2, 1465}, {3, 1465}, {4, 1465}, {5, 1465}]
+
+  time = 8500 client requests seen = [{5, 1574}]
+  time = 8500      db updates done = [{1, 1570}, {2, 1570}, {3, 1570}, {4, 1570}, {5, 1570}]
+
+  time = 9000 client requests seen = [{5, 1693}]
+  time = 9000      db updates done = [{1, 1690}, {2, 1690}, {3, 1690}, {4, 1690}, {5, 1690}]
+
+  time = 9500 client requests seen = [{5, 1810}]
+  time = 9500      db updates done = [{1, 1805}, {2, 1805}, {3, 1805}, {4, 1805}, {5, 1810}]
+
+  time = 10000 client requests seen = [{5, 1920}]
+  time = 10000      db updates done = [{1, 1915}, {2, 1915}, {3, 1915}, {4, 1915}, {5, 1915}]
+
+  time = 10500 client requests seen = [{5, 2033}]
+  time = 10500      db updates done = [{1, 2026}, {2, 2030}, {3, 2030}, {4, 2030}, {5, 2030}]
+
+  time = 11000 client requests seen = [{5, 2146}]
+  time = 11000      db updates done = [{1, 2140}, {2, 2140}, {3, 2140}, {4, 2140}, {5, 2145}]
+
+  time = 11500 client requests seen = [{5, 2257}]
+  time = 11500      db updates done = [{1, 2255}, {2, 2255}, {3, 2255}, {4, 2250}, {5, 2255}]
+
+  time = 12000 client requests seen = [{5, 2365}]
+  time = 12000      db updates done = [{1, 2360}, {2, 2360}, {3, 2360}, {4, 2360}, {5, 2365}]
+
+  time = 12500 client requests seen = [{5, 2471}]
+  time = 12500      db updates done = [{1, 2465}, {2, 2465}, {3, 2465}, {4, 2465}, {5, 2470}]
+
+  time = 13000 client requests seen = [{5, 2555}]
+  time = 13000      db updates done = [{1, 2550}, {2, 2550}, {3, 2550}, {4, 2550}, {5, 2550}]
+
+  time = 13500 client requests seen = [{5, 2660}]
+  time = 13500      db updates done = [{1, 2655}, {2, 2655}, {3, 2655}, {4, 2655}, {5, 2660}]
+
+  time = 14000 client requests seen = [{5, 2760}]
+  time = 14000      db updates done = [{1, 2755}, {2, 2755}, {3, 2755}, {4, 2755}, {5, 2760}]
+
+  Node server2_54_prince_an@127.0.0.1 exiting - maxtime reached
+  Node server3_54_prince_an@127.0.0.1 exiting - maxtime reached
+  Node server4_54_prince_an@127.0.0.1 exiting - maxtime reached
+  Node server5_54_prince_an@127.0.0.1 exiting - maxtime reached
+  Node client1_54_prince_an@127.0.0.1 exiting - maxtime reached
+  Node client5_54_prince_an@127.0.0.1 exiting - maxtime reached
+  Node client2_54_prince_an@127.0.0.1 exiting - maxtime reached
+  Node client4_54_prince_an@127.0.0.1 exiting - maxtime reached
+  Node client3_54_prince_an@127.0.0.1 exiting - maxtime reached
+  Node server1_54_prince_an@127.0.0.1 exiting - maxtime reached
+  time = 14500 client requests seen = [{5, 2830}]
+  time = 14500      db updates done = [{1, 2830}, {2, 2830}, {3, 2830}, {4, 2830}, {5, 2830}]
+
+  Node raft_54_prince_an@127.0.0.1 exiting - maxtime reached
+  time = 15000 client requests seen = [{5, 2924}]
+  time = 15000      db updates done = [{1, 2919}, {2, 2919}, {3, 2919}, {4, 2919}, {5, 2924}]
+
+  time = 15500 client requests seen = [{5, 2987}]
+  time = 15500      db updates done = [{1, 2984}, {2, 2974}, {3, 2974}, {4, 2979}, {5, 2984}]
+

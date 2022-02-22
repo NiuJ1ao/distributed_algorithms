@@ -1,0 +1,119 @@
+mix compile
+-------------------------------------------------------------------
+  time = 500 client requests seen = []
+  time = 500      db updates done = []
+
+server5-0001 role=LEADER    term=002 !inf "Become leader"
+  time = 1000 client requests seen = [{5, 18}]
+  time = 1000      db updates done = [{1, 16}, {2, 16}, {3, 8}, {4, 8}, {5, 18}]
+
+  time = 1500 client requests seen = [{5, 113}]
+  time = 1500      db updates done = [{1, 109}, {2, 109}, {3, 109}, {4, 109}, {5, 109}]
+
+  Node server1_49_prince_an@127.0.0.1 exiting - Server1 crashed
+
+07:48:53.642 [error] Process #PID<18205.147.0> on node :"server1_49_prince_an@127.0.0.1" raised an exception
+** (UndefinedFunctionError) function :ok.commit_index/0 is undefined (module :ok is not available)
+    :ok.commit_index()
+    (raft 0.1.0) lib/server.ex:117: Server.execute_committed_entries/1
+    (raft 0.1.0) lib/server.ex:30: Server.next/1
+  time = 2000 client requests seen = [{5, 186}]
+  time = 2000      db updates done = [{1, 117}, {2, 184}, {3, 184}, {4, 184}, {5, 184}]
+
+  time = 2500 client requests seen = [{5, 254}]
+  time = 2500      db updates done = [{1, 117}, {2, 249}, {3, 249}, {4, 249}, {5, 249}]
+
+  time = 3000 client requests seen = [{5, 321}]
+  time = 3000      db updates done = [{1, 117}, {2, 314}, {3, 314}, {4, 314}, {5, 319}]
+
+  time = 3500 client requests seen = [{5, 394}]
+  time = 3500      db updates done = [{1, 117}, {2, 389}, {3, 389}, {4, 389}, {5, 394}]
+
+  time = 4000 client requests seen = [{5, 467}]
+  time = 4000      db updates done = [{1, 117}, {2, 464}, {3, 464}, {4, 464}, {5, 464}]
+
+  time = 4500 client requests seen = [{5, 539}]
+  time = 4500      db updates done = [{1, 117}, {2, 534}, {3, 534}, {4, 534}, {5, 539}]
+
+  time = 5000 client requests seen = [{5, 613}]
+  time = 5000      db updates done = [{1, 117}, {2, 609}, {3, 609}, {4, 609}, {5, 609}]
+
+  Node server3_49_prince_an@127.0.0.1 exiting - Server3 crashed
+
+07:48:57.233 [error] Process #PID<18313.147.0> on node :"server3_49_prince_an@127.0.0.1" raised an exception
+** (UndefinedFunctionError) function :ok.commit_index/0 is undefined (module :ok is not available)
+    :ok.commit_index()
+    (raft 0.1.0) lib/server.ex:117: Server.execute_committed_entries/1
+    (raft 0.1.0) lib/server.ex:30: Server.next/1
+  time = 5500 client requests seen = [{5, 684}]
+  time = 5500      db updates done = [{1, 117}, {2, 679}, {3, 625}, {4, 679}, {5, 679}]
+
+  time = 6000 client requests seen = [{5, 753}]
+  time = 6000      db updates done = [{1, 117}, {2, 749}, {3, 625}, {4, 749}, {5, 749}]
+
+  time = 6500 client requests seen = [{5, 813}]
+  time = 6500      db updates done = [{1, 117}, {2, 809}, {3, 625}, {4, 809}, {5, 809}]
+
+  time = 7000 client requests seen = [{5, 882}]
+  time = 7000      db updates done = [{1, 117}, {2, 879}, {3, 625}, {4, 879}, {5, 879}]
+
+  time = 7500 client requests seen = [{5, 947}]
+  time = 7500      db updates done = [{1, 117}, {2, 944}, {3, 625}, {4, 944}, {5, 944}]
+
+  time = 8000 client requests seen = [{5, 1010}]
+  time = 8000      db updates done = [{1, 117}, {2, 1004}, {3, 625}, {4, 1004}, {5, 1009}]
+
+  time = 8500 client requests seen = [{5, 1075}]
+  time = 8500      db updates done = [{1, 117}, {2, 1074}, {3, 625}, {4, 1069}, {5, 1074}]
+
+  time = 9000 client requests seen = [{5, 1134}]
+  time = 9000      db updates done = [{1, 117}, {2, 1129}, {3, 625}, {4, 1129}, {5, 1134}]
+
+  time = 9500 client requests seen = [{5, 1195}]
+  time = 9500      db updates done = [{1, 117}, {2, 1194}, {3, 625}, {4, 1189}, {5, 1194}]
+
+  time = 10000 client requests seen = [{5, 1258}]
+  time = 10000      db updates done = [{1, 117}, {2, 1254}, {3, 625}, {4, 1254}, {5, 1254}]
+
+  time = 10500 client requests seen = [{5, 1319}]
+  time = 10500      db updates done = [{1, 117}, {2, 1314}, {3, 625}, {4, 1314}, {5, 1314}]
+
+  time = 11000 client requests seen = [{5, 1375}]
+  time = 11000      db updates done = [{1, 117}, {2, 1374}, {3, 625}, {4, 1369}, {5, 1374}]
+
+  time = 11500 client requests seen = [{5, 1433}]
+  time = 11500      db updates done = [{1, 117}, {2, 1429}, {3, 625}, {4, 1429}, {5, 1429}]
+
+  time = 12000 client requests seen = [{5, 1497}]
+  time = 12000      db updates done = [{1, 117}, {2, 1494}, {3, 625}, {4, 1494}, {5, 1494}]
+
+  time = 12500 client requests seen = [{5, 1564}]
+  time = 12500      db updates done = [{1, 117}, {2, 1559}, {3, 625}, {4, 1559}, {5, 1559}]
+
+  time = 13000 client requests seen = [{5, 1630}]
+  time = 13000      db updates done = [{1, 117}, {2, 1629}, {3, 625}, {4, 1624}, {5, 1629}]
+
+  time = 13500 client requests seen = [{5, 1699}]
+  time = 13500      db updates done = [{1, 117}, {2, 1694}, {3, 625}, {4, 1694}, {5, 1699}]
+
+  time = 14000 client requests seen = [{5, 1764}]
+  time = 14000      db updates done = [{1, 117}, {2, 1759}, {3, 625}, {4, 1759}, {5, 1759}]
+
+  Node client3_49_prince_an@127.0.0.1 exiting - maxtime reached
+  Node server5_49_prince_an@127.0.0.1 exiting - maxtime reached
+  Node client5_49_prince_an@127.0.0.1 exiting - maxtime reached
+  Node server2_49_prince_an@127.0.0.1 exiting - maxtime reached
+  Node client1_49_prince_an@127.0.0.1 exiting - maxtime reached
+  Node client2_49_prince_an@127.0.0.1 exiting - maxtime reached
+  Node server4_49_prince_an@127.0.0.1 exiting - maxtime reached
+  Node client4_49_prince_an@127.0.0.1 exiting - maxtime reached
+  time = 14500 client requests seen = [{5, 1819}]
+  time = 14500      db updates done = [{1, 117}, {2, 1816}, {3, 625}, {4, 1816}, {5, 1816}]
+
+  Node raft_49_prince_an@127.0.0.1 exiting - maxtime reached
+  time = 15000 client requests seen = [{5, 1882}]
+  time = 15000      db updates done = [{1, 117}, {2, 1877}, {3, 625}, {4, 1877}, {5, 1882}]
+
+  time = 15500 client requests seen = [{5, 1919}]
+  time = 15500      db updates done = [{1, 117}, {2, 1917}, {3, 625}, {4, 1917}, {5, 1917}]
+
