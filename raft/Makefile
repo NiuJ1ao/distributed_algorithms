@@ -28,6 +28,7 @@ HOST	 := 127.0.0.1
 ###################################
 #          Test Case 1            #
 ###################################
+# DEBUG_OPTIONS = "+areq -areq +arep -arep +vreq +vall -vreq +vrep -vrep +atim -atim +etim -etim +dreq -dreq +drep -drep -creq -crep"
 # DEBUG_MODE    = TEST_VOTE
 # TIMELIMIT 	= 3500
 ###################################
