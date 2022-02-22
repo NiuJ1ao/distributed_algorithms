@@ -1,0 +1,259 @@
+mix compile
+Compiling 14 files (.ex)
+Generated raft app
+-------------------------------------------------------------------
+server1-0001 role=FOLLOWER  term=000 +etim {{:ELECTION_TIMEOUT, 0, 0}, 155}
+server3-0001 role=FOLLOWER  term=000 +etim {{:ELECTION_TIMEOUT, 0, 0}, 176}
+server2-0001 role=FOLLOWER  term=000 +etim {{:ELECTION_TIMEOUT, 0, 0}, 150}
+server5-0001 role=FOLLOWER  term=000 +etim {{:ELECTION_TIMEOUT, 0, 0}, 195}
+server4-0001 role=FOLLOWER  term=000 +etim {{:ELECTION_TIMEOUT, 0, 0}, 120}
+server1-0002 role=FOLLOWER  term=000 -etim {:ELECTION_TIMEOUT, 0, 0}
+server1-0003 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 130}
+server2-0002 role=FOLLOWER  term=000 -etim "Update Client Timer"
+server2-0003 role=FOLLOWER  term=000 +etim {{:ELECTION_TIMEOUT, 0, 0}, 179}
+  time = 500 client requests seen = []
+  time = 500      db updates done = []
+
+server3-0002 role=FOLLOWER  term=000 -etim "Update Client Timer"
+server2-0004 role=FOLLOWER  term=000 -vreq "Recive a vote request from server"
+server3-0003 role=FOLLOWER  term=000 +etim {{:ELECTION_TIMEOUT, 0, 0}, 114}
+server3-0004 role=FOLLOWER  term=000 -vreq "Recive a vote request from server"
+server3-0005 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 0}, 139}
+server3-0006 role=FOLLOWER  term=001 +vrep %{election: 1, voteGranted: true, voted_by: #PID<0.147.0>, voted_for: #PID<18341.147.0>}
+server1-0004 role=CANDIDATE term=001 +vall "Broadcast vote requests"
+server2-0005 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 0}, 144}
+server1-0005 role=CANDIDATE term=001 -vrep {:VOTE_REPLY, 1, %{election: 1, voteGranted: true, voted_by: #PID<18342.147.0>, voted_for: #PID<0.147.0>}}
+server1-0006 role=CANDIDATE term=001 -vrep {:VOTE_REPLY, 1, %{election: 1, voteGranted: true, voted_by: #PID<18341.147.0>, voted_for: #PID<0.147.0>}}
+server2-0006 role=FOLLOWER  term=001 +vrep %{election: 1, voteGranted: true, voted_by: #PID<0.147.0>, voted_for: #PID<18341.147.0>}
+server1-0007 role=LEADER    term=001 +areq "Broadcast APPEND_ENTRIES_REQUEST"
+server1-0008 role=LEADER    term=001 +atim {{:APPEND_ENTRIES_TIMEOUT, 1, #PID<18341.147.0>}, 10}
+server1-0009 role=LEADER    term=001 +areq "HEARTBEAT"
+server1-0009 role=LEADER    term=001 +atim {{:APPEND_ENTRIES_TIMEOUT, 1, #PID<18342.147.0>}, 10}
+server1-0010 role=LEADER    term=001 +areq "HEARTBEAT"
+server1-0010 role=LEADER    term=001 +atim {{:APPEND_ENTRIES_TIMEOUT, 1, #PID<18343.147.0>}, 10}
+server1-0011 role=LEADER    term=001 +areq "HEARTBEAT"
+server1-0011 role=LEADER    term=001 +atim {{:APPEND_ENTRIES_TIMEOUT, 1, #PID<18344.147.0>}, 10}
+server1-0012 role=LEADER    term=001 +areq "HEARTBEAT"
+server5-0002 role=FOLLOWER  term=000 -etim "Update Client Timer"
+server5-0003 role=FOLLOWER  term=000 +etim {{:ELECTION_TIMEOUT, 0, 0}, 182}
+server5-0004 role=FOLLOWER  term=000 -vreq "Recive a vote request from server"
+server5-0005 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 0}, 155}
+server1-0012 role=LEADER    term=001 -vrep {:VOTE_REPLY, 1, %{election: 1, voteGranted: true, voted_by: #PID<18344.147.0>, voted_for: #PID<0.147.0>}}
+server1-0013 role=LEADER    term=001 -vrep "Ignore vote %{election: 1, voteGranted: true, voted_by: #PID<18344.147.0>, voted_for: #PID<0.147.0>}"
+server5-0006 role=FOLLOWER  term=001 +vrep %{election: 1, voteGranted: true, voted_by: #PID<0.147.0>, voted_for: #PID<18331.147.0>}
+server4-0002 role=FOLLOWER  term=000 -etim "Update Client Timer"
+server4-0003 role=FOLLOWER  term=000 +etim {{:ELECTION_TIMEOUT, 0, 0}, 104}
+server4-0004 role=FOLLOWER  term=000 -vreq "Recive a vote request from server"
+server4-0005 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 0}, 154}
+server1-0014 role=LEADER    term=001 -vrep {:VOTE_REPLY, 1, %{election: 1, voteGranted: true, voted_by: #PID<18343.147.0>, voted_for: #PID<0.147.0>}}
+server1-0015 role=LEADER    term=001 -vrep "Ignore vote %{election: 1, voteGranted: true, voted_by: #PID<18343.147.0>, voted_for: #PID<0.147.0>}"
+server4-0006 role=FOLLOWER  term=001 +vrep %{election: 1, voteGranted: true, voted_by: #PID<0.147.0>, voted_for: #PID<18341.147.0>}
+server3-0007 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0008 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 166}
+server2-0007 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0008 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 125}
+server5-0007 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0008 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 106}
+server4-0007 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0008 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 184}
+server2-0009 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0010 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 155}
+server5-0009 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0010 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 126}
+server3-0009 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0010 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 124}
+server4-0009 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0010 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 138}
+server5-0011 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0012 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 176}
+server3-0011 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0012 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 150}
+server2-0011 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0012 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 143}
+  time = 1000 client requests seen = []
+  time = 1000      db updates done = []
+
+server4-0011 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0012 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 199}
+server2-0013 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0014 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 200}
+server3-0013 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0014 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 185}
+server5-0013 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0014 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 148}
+server4-0013 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0014 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 191}
+server5-0015 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0016 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 131}
+server3-0015 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0016 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 174}
+server2-0015 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0016 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 199}
+server5-0017 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0018 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 180}
+server4-0015 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0016 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 132}
+server3-0017 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0018 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 124}
+server2-0017 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0018 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 140}
+  time = 1500 client requests seen = []
+  time = 1500      db updates done = []
+
+server4-0017 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0018 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 158}
+server5-0019 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0020 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 120}
+server3-0019 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0020 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 121}
+server2-0019 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0020 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 163}
+server5-0021 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0022 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 175}
+server3-0021 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0022 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 134}
+server4-0019 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0020 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 107}
+server2-0021 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0022 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 118}
+server4-0021 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0022 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 146}
+server3-0023 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0024 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 162}
+server5-0023 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0024 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 148}
+server2-0023 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0024 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 155}
+server4-0023 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0024 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 193}
+server3-0025 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0026 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 177}
+  time = 2000 client requests seen = []
+  time = 2000      db updates done = []
+
+server5-0025 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0026 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 186}
+server2-0025 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0026 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 185}
+server4-0025 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0026 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 146}
+server3-0027 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0028 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 102}
+server5-0027 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0028 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 138}
+  Node server1_19_prince_an@127.0.0.1 exiting - Server1 crashed
+server2-0027 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0028 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 102}
+server3-0029 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0030 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 161}
+server4-0027 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0028 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 190}
+server5-0029 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0030 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 132}
+server2-0029 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0030 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 168}
+server3-0031 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0032 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 193}
+server5-0031 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0032 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 174}
+server4-0029 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0030 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 191}
+  time = 2500 client requests seen = []
+  time = 2500      db updates done = []
+
+server2-0031 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0032 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 172}
+server3-0033 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0034 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 161}
+server5-0033 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0034 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 196}
+server4-0031 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0032 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 145}
+server2-0033 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0034 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 118}
+server3-0035 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0036 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 117}
+server2-0035 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0036 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 125}
+server4-0033 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0034 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 135}
+server5-0035 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0036 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 109}
+  Node server4_19_prince_an@127.0.0.1 exiting - maxtime reached
+  Node server2_19_prince_an@127.0.0.1 exiting - maxtime reached
+  Node server1_19_prince_an@127.0.0.1 exiting - maxtime reached
+  Node client1_19_prince_an@127.0.0.1 exiting - maxtime reached
+server3-0037 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0038 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 186}
+  Node client3_19_prince_an@127.0.0.1 exiting - maxtime reached
+  Node client5_19_prince_an@127.0.0.1 exiting - maxtime reached
+  Node server3_19_prince_an@127.0.0.1 exiting - maxtime reached
+  Node server5_19_prince_an@127.0.0.1 exiting - maxtime reached
+  Node client2_19_prince_an@127.0.0.1 exiting - maxtime reached
+  Node client4_19_prince_an@127.0.0.1 exiting - maxtime reached
+server2-0037 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0038 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 200}
+server5-0037 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0035 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0036 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 118}
+server5-0038 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 138}
+  time = 3000 client requests seen = []
+  time = 3000      db updates done = []
+
+server4-0037 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0038 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 149}
+server3-0039 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0040 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 124}
+server5-0039 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0040 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 147}
+server2-0039 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0040 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 181}
+server3-0041 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0042 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 116}
+server4-0039 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0040 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 118}
+server5-0041 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0042 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 100}
+server2-0041 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0042 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 188}
+server3-0043 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0044 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 130}
+server4-0041 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0042 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 137}
+server5-0043 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0044 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 131}
+server3-0045 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0046 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 198}
+  Node raft_19_prince_an@127.0.0.1 exiting - maxtime reached
+server5-0045 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0046 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 116}
+server4-0043 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0044 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 115}
+  time = 3500 client requests seen = []
+  time = 3500      db updates done = []
+
+server2-0043 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0044 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 137}
+server5-0047 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0048 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 189}
+server4-0045 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0046 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 170}
+server2-0045 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0046 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 197}
+server3-0047 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0048 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 125}
+server4-0047 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server4-0048 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 126}
+server3-0049 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0050 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 105}
+server5-0049 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0050 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 138}
+server2-0047 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server2-0048 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 181}
+server3-0051 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server3-0052 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 115}
+server5-0051 role=FOLLOWER  term=001 -etim "Update Client Timer"
+server5-0052 role=FOLLOWER  term=001 +etim {{:ELECTION_TIMEOUT, 1, 1}, 113}
+  time = 4000 client requests seen = []
+  time = 4000      db updates done = []
+
