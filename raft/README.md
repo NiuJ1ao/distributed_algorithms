@@ -1,6 +1,11 @@
 # Raft
 
-**TODO: Add description**
+<!-- **TODO: Add description** -->
+## Run
+Before running the algorithm, parameters can be changed in the Makefile and configuration.ex to explore the performance of our Raft implementation under different senario.
+```
+make
+```
 
 ## Installation
 

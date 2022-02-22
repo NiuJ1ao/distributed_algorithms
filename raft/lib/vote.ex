@@ -47,25 +47,25 @@ end # receive_vote_reply_from_follower
 
 # ________________________________________________________________________  Candidate >> Follower
 defp is_valid_vote(s, m) do
-  (s.voted_for == nil or s.voted_for == m.from) and (m.last_term > Log.last_term(s) or (m.last_term == Log.last_term(s) and m.last_index >= Log.last_index(s)))
+  (s.voted_for == nil or s.voted_for == m.candidateP) and (m.last_term > Log.last_term(s) or (m.last_term == Log.last_term(s) and m.last_index >= Log.last_index(s)))
 end
 
 def receive_vote_request_from_candidate(s, mterm, m) when m.election > s.curr_election do
   s |> Server.follower_if_higher(mterm)
     |> State.curr_election(m.election)
-    |> State.voted_for(m.from)
-    |> send_vote_reply_to_candidate(m.from, true)
+    |> State.voted_for(m.candidateP)
+    |> send_vote_reply_to_candidate(m.candidateP, true)
 end # receive_vote_request_from_candidate
 
 def receive_vote_request_from_candidate(s, _mterm, m) do
   if m.election == s.curr_election and is_valid_vote(s, m) do
-    s |> State.voted_for(m.from)
+    s |> State.voted_for(m.candidateP)
       |> Timer.restart_election_timer()
-      |> send_vote_reply_to_candidate(m.from, true)
+      |> send_vote_reply_to_candidate(m.candidateP, true)
   else
     s |> Debug.message("-vreq", "Reject to vote")
       |> Timer.restart_election_timer()
-      |> send_vote_reply_to_candidate(m.from, false)
+      |> send_vote_reply_to_candidate(m.candidateP, false)
   end
 end # receive_vote_request_from_candidate
 
@@ -89,7 +89,7 @@ end # receive_election_timeout
 defp broadcast_vote_requests(s) do
   for server <- s.servers, server != s.selfP, do:
       send server, {:VOTE_REQUEST, s.curr_term, %{
-        from: s.selfP,
+        candidateP: s.selfP,
         election: s.curr_election,
         last_term: Log.last_term(s),
         last_index: Log.last_index(s)
