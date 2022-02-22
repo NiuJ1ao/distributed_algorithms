@@ -65,6 +65,78 @@ def params :default do
   }
 end # params :default
 
+def params :leader_crash do # if server 1 or server 5 is not leader, run again
+  %{
+    n_accounts:              100,      # account numbers 1 .. n_accounts
+    max_amount:              1_000,    # max amount moved between accounts in a single transaction
+
+    client_timelimit:        60_000,   # clients stops sending requests after this time(ms)
+    max_client_requests:     5_000,        # maximum no of requests each client will attempt
+    client_request_interval: 5,        # interval(ms) between client requests
+    client_reply_timeout:    50,      # timeout(ms) for the reply to a client request
+
+    election_timeout_range:  100..200, # timeout(ms) for election, set randomly in range
+    append_entries_timeout:  10,       # timeout(ms) for the reply to a append_entries request
+
+    dummy_time_interval:     10,
+
+    monitor_interval:        500,      # interval(ms) between monitor summaries
+
+    crash_servers: %{		       # server_num => crash_after_time (ms), ..
+      1 => 5_000,
+      5 => 5_000,
+    }
+  }
+end
+
+def params :long_append_entries do
+  %{
+    n_accounts:              100,      # account numbers 1 .. n_accounts
+    max_amount:              1_000,    # max amount moved between accounts in a single transaction
+
+    client_timelimit:        60_000,   # clients stops sending requests after this time(ms)
+    max_client_requests:     5_000,        # maximum no of requests each client will attempt
+    client_request_interval: 5,        # interval(ms) between client requests
+    client_reply_timeout:    50,      # timeout(ms) for the reply to a client request
+
+    election_timeout_range:  100..200, # timeout(ms) for election, set randomly in range
+    append_entries_timeout:  1000,       # timeout(ms) for the reply to a append_entries request
+
+    dummy_time_interval:     10,
+
+    monitor_interval:        500,      # interval(ms) between monitor summaries
+
+    crash_servers: %{		       # server_num => crash_after_time (ms), ..
+      # 1 => 5_000,
+      # 5 => 5_000,
+    }
+  }
+end
+
+def params :low_election_timeout do
+  %{
+    n_accounts:              100,      # account numbers 1 .. n_accounts
+    max_amount:              1_000,    # max amount moved between accounts in a single transaction
+
+    client_timelimit:        60_000,   # clients stops sending requests after this time(ms)
+    max_client_requests:     5_000,        # maximum no of requests each client will attempt
+    client_request_interval: 5,        # interval(ms) between client requests
+    client_reply_timeout:    50,      # timeout(ms) for the reply to a client request
+
+    election_timeout_range:  10..10, # timeout(ms) for election, set randomly in range
+    append_entries_timeout:  10,       # timeout(ms) for the reply to a append_entries request
+
+    dummy_time_interval:     10,
+
+    monitor_interval:        500,      # interval(ms) between monitor summaries
+
+    crash_servers: %{		       # server_num => crash_after_time (ms), ..
+      # 1 => 5_000,
+      # 5 => 5_000,
+    }
+  }
+end
+
 def params :low_vote_timeout do
   %{
     n_accounts:              100,      # account numbers 1 .. n_accounts
